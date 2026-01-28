@@ -120,6 +120,9 @@ const styles = StyleSheet.create({
 
 export default function App() {
   const [workouts, setWorkouts] = useState<string[]>([]);
+  AsyncStorage.getItem('days')
+  .then(string => string? JSON.parse(string): [])
+  .then(object => setWorkouts(object))
   return (
     <SafeAreaProvider>
       <WorkoutsContext value={workouts}>
