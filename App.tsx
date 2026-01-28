@@ -4,10 +4,14 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FontAwesome6 } from "@react-native-vector-icons/fontawesome6";
+import { useState, useContext } from 'react';
+import { SetWorkoutsContext, WorkoutsContext } from './src/contexts/WorkoutsContext';
 
 type RootStackParamList = {
-  Home: undefined;
-  Day: { title: string };
+  'Home': undefined;
+  'Workout': { title: string };
+  'Add Workout': undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -16,7 +20,7 @@ function RootStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Day" component={Day} options={({ route }) => ({
+        <Stack.Screen name="Workout" component={WorkoutScreen} options={({ route }) => ({
         title: route.params.title || "Day"
       })}/>
     </Stack.Navigator>
@@ -25,12 +29,7 @@ function RootStack() {
 
 function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  let days: string[] = ['day 1', 'day 2', 'day 3'];
-  AsyncStorage.getItem('days').then(result => {
-    if (result) {
-      days = JSON.parse(result);
-    }
-  });
+  let workouts = useContext(WorkoutsContext);
   return (
     <View style={styles.container}>
       {days.map(day => <Card title={day} onPress={() => navigation.navigate('Day', { 'title': day })} />)}
@@ -69,11 +68,16 @@ const styles = StyleSheet.create({
 });
 
 export default function App() {
+  const [workouts, setWorkouts] = useState<string[]>([]);
   return (
     <SafeAreaProvider>
+      <WorkoutsContext value={workouts}>
+        <SetWorkoutsContext value={setWorkouts}>
       <NavigationContainer>
         <RootStack />
       </NavigationContainer>
+        </SetWorkoutsContext>
+      </WorkoutsContext>
     </SafeAreaProvider>
   );
 }
