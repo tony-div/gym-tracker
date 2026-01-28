@@ -1,11 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer, RouteProp, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FontAwesome6 } from "@react-native-vector-icons/fontawesome6";
 import { useState, useContext } from 'react';
 import { SetWorkoutsContext, WorkoutsContext } from './src/contexts/WorkoutsContext';
+import Button from './src/ui/Button';
 
 type RootStackParamList = {
   'Home': undefined;
@@ -40,11 +40,7 @@ function HomeScreen() {
         {workouts.map(workout => <Button key={workout} title={workout} onPress={() => navigation.navigate('Workout', { 'title': workout })} />)}
       </View>
       <View style={styles.fab}>
-        <TouchableOpacity onPress={() => navigation.navigate("Add Workout")}>
-          <Text>
-            <FontAwesome6 name="plus" size={30} color="#000" iconStyle='solid' />
-          </Text>
-        </TouchableOpacity>
+        <Button onPress={() => navigation.navigate("Add Workout")} iconName='plus' />
       </View>
     </>
   );
@@ -59,15 +55,11 @@ function AddWorkoutModal() {
       <View style={styles.container}>
         <TextInput placeholder='workout name' onChangeText={(text) => setWorkoutName(text)} style={styles.textInput} />
       </View>
-      <TouchableOpacity style={styles.button} onPress={() => {
+      <Button onPress={() => {
         if(workoutName.length < 3) return;
         saveNewWorkout(workoutName).then(workouts => setWorkouts(workouts));
         navigation.goBack();
-      }}>
-        <View>
-          <Text style={styles.buttonText}>submit</Text>
-        </View>
-      </TouchableOpacity>
+      }} title='submit' />
     </View>
   )
 }
@@ -93,25 +85,6 @@ function WorkoutScreen({route}: {route: RouteProp<RootStackParamList, 'Workout'>
   );
 }
 
-function Button({title, onPress}: {title: string, onPress: () => void}) {
-  return <TouchableOpacity style={styles.card} onPress={onPress}>
-    <Text>
-      {title}
-    </Text>
-  </TouchableOpacity>;
-}
-
-function Card({title, imagePath, onPress}: {title: string, imagePath: string, onPress: () => void}) {
-  return <TouchableOpacity style={styles.card} onPress={onPress}>
-    <View>
-      <Image source={{ uri: imagePath }} style={styles.cardImage} />
-    </View>
-    <Text>
-      {title}
-    </Text>
-  </TouchableOpacity>
-}
-
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
@@ -120,13 +93,6 @@ const styles = StyleSheet.create({
   home: {
     flex: 1,
     justifyContent: 'center'
-  },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    padding: 16,
-    margin: 10,
-    shadowColor: '#000',
   },
   fab: {
     position: 'absolute',
@@ -144,29 +110,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     borderRadius: 10,
   },
-  button: {
-    width: '95%',
-    margin: 10,
-    backgroundColor: '#fff',
-    fontSize: 15,
-    borderRadius: 10,
-    textAlign: 'center',
-    padding: 10,
-    justifyContent: 'center'
-  },
-  buttonText: {
-    textAlign: 'center'
-  },
   modal: {
     display: 'flex',
     height: '90%',
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
-  cardImage: {
-    width: 150,
-    height: 75
-  }
 });
 
 export default function App() {
