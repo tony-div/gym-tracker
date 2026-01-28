@@ -72,7 +72,6 @@ const saveNewWorkout = async (workoutName: string) => {
   }
   workouts.push(workoutName);
   AsyncStorage.setItem('days', JSON.stringify(workouts));
-
   return workouts;
 }
 
@@ -98,9 +97,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 70,
     right: 30,
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: '#fff'
   },
   textInput: {
     width: '95%',
