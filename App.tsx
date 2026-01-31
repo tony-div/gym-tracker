@@ -2,7 +2,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { useEffect } from 'react';
 import HomeScreen, { AddWorkoutModal, HomeEditButton } from './src/screens/HomeScreen';
-import EditWorkoutsScreen from './src/screens/EditWorkoutsScreen';
+import EditWorkoutsScreen, { EditWorkoutModal } from './src/screens/EditWorkoutsScreen';
 import { Stack } from './src/utils/navitgation';
 import WorkoutScreen, { AddExerciseModal } from './src/screens/WorkoutScreen';
 import ExerciseScreen from './src/screens/ExerciseScreen';
@@ -25,7 +25,7 @@ function RootStack() {
       </Stack.Group>
       <Stack.Group screenOptions={{presentation: 'modal'}}>
         <Stack.Screen name='Add Workout' component={AddWorkoutModal} />
-        <Stack.Screen name='Edit Workout' component={AddWorkoutModal} />
+        <Stack.Screen name='Edit Workout' component={EditWorkoutModal} />
         <Stack.Screen name='Add Exercise' component={AddExerciseModal} />
       </Stack.Group>
     </Stack.Navigator>
