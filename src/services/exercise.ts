@@ -1,10 +1,10 @@
-import { db, runQuery, ExerciseEntity, WorkoutEntity } from "./sqlite";
+import { db, runQuery, ExerciseEntity } from "./sqlite";
 import { Exercise } from "../interfaces/exercise";
 import { Asset } from "react-native-image-picker";
 import { DocumentDirectoryPath, moveFile } from "@dr.pogodin/react-native-fs";
 import { unlink } from "@dr.pogodin/react-native-fs";
 
-export const getExercises = async (workoutId: string) => {
+export const getExercises = async (workoutId: number) => {
   try {
      const exercisesRes = await runQuery<ExerciseEntity>(`
         SELECT e.* 
@@ -28,7 +28,7 @@ export const getExercises = async (workoutId: string) => {
   }
 }
 
-export const saveNewExercise = async (workoutName: string, exercise: Exercise, image?: Asset, video?: Asset) => {
+export const saveNewExercise = async (workoutId: number, exercise: Exercise, image?: Asset, video?: Asset) => {
   if(image) {
     const imageDestPath = `file://${DocumentDirectoryPath}/${image?.fileName}`;
     await moveFile(image.uri!, imageDestPath); 
@@ -41,20 +41,12 @@ export const saveNewExercise = async (workoutName: string, exercise: Exercise, i
   }
 
   try {
-     const workoutRes = await runQuery<Pick<WorkoutEntity, 'workout_id'>>('SELECT workout_id FROM workouts WHERE workout_name = ?', [workoutName]);
-     if (!workoutRes.length) {
-         console.error("Workout not found");
-         return [];
-     }
-     const workoutId = workoutRes[0].workout_id;
-
-     const insertRes = await db.execute(
-       'INSERT INTO exercises (exercise_name, image_uri, video_uri, sets, reps, weight, weight_unit) VALUES (?, ?, ?, ?, ?, ?, ?)',
-       [exercise.title, exercise.imagePath ?? null, exercise.videoPath ?? null, exercise.sets, exercise.reps, exercise.weight, exercise.weightUnit]
-     );
-     const exerciseId = insertRes.insertId;
-
-     await db.execute('INSERT INTO workout_exercise (workout_id, exercise_id) VALUES (?, ?)', [workoutId, exerciseId!]);
+    const insertRes = await db.execute(
+      'INSERT INTO exercises (exercise_name, image_uri, video_uri, sets, reps, weight, weight_unit) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [exercise.title, exercise.imagePath ?? null, exercise.videoPath ?? null, exercise.sets, exercise.reps, exercise.weight, exercise.weightUnit]
+    );
+    const exerciseId = insertRes.insertId;
+    await db.execute('INSERT INTO workout_exercise (workout_id, exercise_id) VALUES (?, ?)', [workoutId, exerciseId!]);
   } catch (e) {
       console.error(e);
   }

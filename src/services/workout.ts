@@ -23,7 +23,7 @@ export const saveNewWorkout = async (workoutName: string) => {
 
 export const renameWorkout = async (workoutId: number, newName: string) => {
   try {
-    const query = `UPDATE workouts SET workout_name = ? WHERE id = ?`;
+    const query = `UPDATE workouts SET workout_name = ? WHERE workout_id = ?`;
     await db.execute(query, [newName, workoutId]);
     return await getWorkouts();
   } catch (e) {
@@ -34,8 +34,8 @@ export const renameWorkout = async (workoutId: number, newName: string) => {
 
 export const deleteWorkout = async (workoutId: number) => {
   try {
-    await db.execute('DELETE FROM workout_exercises WHERE workout_id = ?', [workoutId]);
-    await db.execute('DELETE FROM workouts WHERE id = ?', [workoutId]);
+    await db.execute('DELETE FROM workout_exercise WHERE workout_id = ?', [workoutId]);
+    await db.execute('DELETE FROM workouts WHERE workout_id = ?', [workoutId]);
   } catch (e) {
     console.error('Error deleting workout:', e);
   }
