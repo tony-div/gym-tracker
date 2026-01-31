@@ -1,13 +1,15 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function Card({title, imagePath, onPress}: {title: string, imagePath: string, onPress: () => void}) {
+export default function Card({title, imagePath, onPress}: {title: string, imagePath?: string, onPress: () => void}) {
   return <TouchableOpacity style={styles.card} onPress={onPress}>
     <View>
-      <Image source={{ uri: imagePath }} style={styles.cardImage} />
+      <Image resizeMode="contain" source={{ uri: imagePath }} style={styles.cardImage} />
     </View>
-    <Text>
-      {title}
-    </Text>
+    <View style={styles.cardText}>
+      <Text>
+        {title}
+      </Text>
+    </View>
   </TouchableOpacity>
 }
 
@@ -20,7 +22,12 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
   },
   cardImage: {
-    width: 150,
-    height: 75
+    width: '100%',
+    height: 100
+  },
+  cardText: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center'
   }
 })
