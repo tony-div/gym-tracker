@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StyleSheet, TextInput, View } from "react-native";
 import Fab from "../ui/Fab";
 import Button from "../ui/Button";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { saveNewWorkout } from "../services/workout";
 
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -42,17 +42,6 @@ export function AddWorkoutModal() {
       }} title='submit' />
     </View>
   )
-}
-
-const saveNewWorkout = async (workoutName: string) => {
-  const days = await AsyncStorage.getItem('days');
-  let workouts = [];
-  if(days != null) {
-    workouts = JSON.parse(days);
-  }
-  workouts.push(workoutName);
-  AsyncStorage.setItem('days', JSON.stringify(workouts));
-  return workouts;
 }
 
 const styles = StyleSheet.create({
