@@ -1,12 +1,15 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function Card({title, imagePath, onPress}: {title: string, imagePath?: string, onPress: () => void}) {
+export default function Card({title, imagePath, alt, onPress}: {title: string, imagePath?: string, alt?: string, onPress?: () => void}) {
   return <TouchableOpacity style={styles.card} onPress={onPress}>
     <View>
-      <Image resizeMode="contain" source={{ uri: imagePath }} style={styles.cardImage} />
+      {imagePath? (
+        <Image resizeMode="contain" source={{ uri: imagePath }} style={styles.cardImage}/>
+      )
+      : <Text style={styles.altText}>{alt}</Text>}
     </View>
     <View style={styles.cardText}>
-      <Text>
+      <Text style={styles.cardTextFont}>
         {title}
       </Text>
     </View>
@@ -15,6 +18,13 @@ export default function Card({title, imagePath, onPress}: {title: string, imageP
 
 const styles = StyleSheet.create({
   card: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    gap: 8,
+    minWidth: 150,
+    minHeight: 150,
     backgroundColor: 'white',
     borderRadius: 8,
     padding: 16,
@@ -22,12 +32,19 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
   },
   cardImage: {
-    width: '100%',
-    height: 100
+    width: 200,
+    height: 200
   },
   cardText: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
+  },
+  cardTextFont: {
+    fontSize: 16,
+  },
+  altText: {
+    textAlign: 'center',
+    fontSize: 30,
   }
 })
