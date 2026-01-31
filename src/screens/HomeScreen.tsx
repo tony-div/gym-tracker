@@ -17,7 +17,7 @@ export default function HomeScreen() {
   return (
     <>
       <View style={styles.home}>
-        {workouts && workouts.map(workout => <Button key={workout.workoutId} title={workout.workoutName} onPress={() => navigation.navigate('Workout', { 'title': workout.workoutName })} />)}
+        {workouts && workouts.map(workout => <Button key={workout.workoutId} title={workout.workoutName} onPress={() => navigation.navigate('Workout', { workout })} />)}
       </View>
       <Fab onPress={() => navigation.navigate("Add Workout")} iconName='plus' />
     </>
@@ -41,7 +41,7 @@ export function AddWorkoutModal() {
         if(workoutName.length < 3) return;
         saveNewWorkout(workoutName);
         navigation.goBack();
-      }} title='submit' />
+      }} title='submit' align="centered" />
     </View>
   )
 }

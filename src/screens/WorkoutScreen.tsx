@@ -14,17 +14,17 @@ import Button from "../ui/Button";
 import { pickMedia } from "../services/media";
 
 export default function WorkoutScreen({route}: {route: RouteProp<RootStackParamList, 'Workout'>}) {
-  const workout = route.params.title;
+  const workout = route.params.workout;
   const [exercises, setExercises] = useState<Exercise[]>([]);
   useFocusEffect(useCallback(() => {
-    getExercises(workout).then(setExercises);
+    getExercises(workout.workoutId).then(setExercises);
   }, [setExercises, workout]));
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   return (
     <>
       <View style={[styles.container, styles.row]}>
         {exercises.map(exercise => {
-          return <View style={styles.exerciseCard}>
+          return <View key={exercise.title} style={styles.exerciseCard}>
             <Card 
             key={exercise.title}
             title={exercise.title} 
@@ -122,16 +122,16 @@ export function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 
               <Button title='pick another photo' onPress={() => pickMedia('photo').then(picked => setImage(picked))} />
             </View>
             <View style={styles.rowChild}>
-              <Button title='ok' onPress={() => setImagePreviewVisible(false)} />
+              <Button title='ok' onPress={() => setImagePreviewVisible(false)} align="centered" />
             </View>
           </View>
         </Modal>
       </View>
       <Button onPress={() => {
         if(exerciseName.length < 3) return;
-        saveNewExercise(workout, {title: exerciseName, sets, reps, weight, weightUnit}, image, video);
+        saveNewExercise(workout.workoutId, {title: exerciseName, sets, reps, weight, weightUnit}, image, video);
         navigation.goBack();
-      }} title='submit' />
+      }} title='submit' align="centered" />
     </View>
   )
 }

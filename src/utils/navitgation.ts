@@ -4,11 +4,11 @@ import { Workout } from "../interfaces/workout";
 
 export type RootStackParamList = {
   'Home': undefined;
-  'Workout': { title: string };
+  'Workout': { workout: Workout };
   'Add Workout': undefined;
   'Edit Workout': { workout: Workout};
   'Edit Workouts': undefined;
-  'Add Exercise': { workout: string };
+  'Add Exercise': { workout: Workout };
   'Exercise': { exercise: Exercise };
 };
 

@@ -16,7 +16,7 @@ function RootStack() {
           headerRight: HomeEditButton
         }} />
         <Stack.Screen name="Workout" component={WorkoutScreen} options={({ route }) => ({
-          title: route.params.title || "Day"
+          title: route.params.workout.workoutName || "Day"
         })}/>
         <Stack.Screen name="Exercise" component={ExerciseScreen} options={({ route }) => ({
           title: route.params.exercise.title || "Exercise"
