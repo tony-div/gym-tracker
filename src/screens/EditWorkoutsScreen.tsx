@@ -1,23 +1,26 @@
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../utils/navitgation";
-import { SetWorkoutsContext, WorkoutsContext } from "../contexts/WorkoutsContext";
-import { useContext, useState } from "react";
+import { useCallback, useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 import ButtonWitToolBar from "../ui/ButtonWithToolBar";
 import Button from "../ui/Button";
+import { Workout } from "../interfaces/workout";
+import { getWorkouts } from "../services/workout";
 
 export default function EditWorkoutsScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  let workouts = useContext(WorkoutsContext);
+  const [workouts, setWorkouts] = useState<Workout[]>();
+  useFocusEffect(useCallback(() => {
+    getWorkouts().then(result => setWorkouts(result));
+  }, []));
   return <View style={styles.screen}>
-    {workouts.map(workout => <ButtonWitToolBar key={workout} title={workout} tools={[{ iconName: 'pen', onPress: () => { navigation.navigate('Edit Workout')} }]} />)}
+    {workouts && workouts.map(workout => <ButtonWitToolBar key={workout.workoutId} title={workout.workoutName} tools={[{ iconName: 'pen', onPress: () => { navigation.navigate('Edit Workout')} }]} />)}
   </View>;
 }
 
 export function EditWorkoutModal() {
   const [workoutName, setWorkoutName] = useState('');
-  const setWorkouts = useContext(SetWorkoutsContext);
   const navigation = useNavigation();
   return (
     <View style={styles.modal}>

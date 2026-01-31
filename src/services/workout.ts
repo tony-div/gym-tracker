@@ -1,12 +1,42 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Workout } from "../interfaces/workout";
+import { db, runQuery, WorkoutEntity } from "./sqlite";
+
+export const getWorkouts = async () => {
+  try {
+    const results = await runQuery<WorkoutEntity>('SELECT workout_id, workout_name FROM workouts');
+    return results.map<Workout>(r => {return {workoutId: r.workout_id, workoutName: r.workout_name};});
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+}
 
 export const saveNewWorkout = async (workoutName: string) => {
-  const days = await AsyncStorage.getItem('days');
-  let workouts = [];
-  if(days != null) {
-    workouts = JSON.parse(days);
+  try {
+    await db.execute('INSERT INTO workouts (workout_name) VALUES (?)', [workoutName]);
+    return await getWorkouts();
+  } catch (e) {
+    console.error('Error saving workout:', e);
+    return [];
   }
-  workouts.push(workoutName);
-  AsyncStorage.setItem('days', JSON.stringify(workouts));
-  return workouts;
+}
+
+export const renameWorkout = async (workoutId: number, newName: string) => {
+  try {
+    const query = `UPDATE workouts SET workout_name = ? WHERE id = ?`;
+    await db.execute(query, [newName, workoutId]);
+    return await getWorkouts();
+  } catch (e) {
+    console.error('Error renaming workout:', e);
+    return [];
+  }
+}
+
+export const deleteWorkout = async (workoutId: number) => {
+  try {
+    await db.execute('DELETE FROM workout_exercises WHERE workout_id = ?', [workoutId]);
+    await db.execute('DELETE FROM workouts WHERE id = ?', [workoutId]);
+  } catch (e) {
+    console.error('Error deleting workout:', e);
+  }
 }

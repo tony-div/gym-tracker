@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Exercise } from "../contexts/ExercisesContext";
+import { Exercise } from "../interfaces/exercise";
 
 export type RootStackParamList = {
   'Home': undefined;

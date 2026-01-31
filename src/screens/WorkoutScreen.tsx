@@ -1,8 +1,8 @@
-import { RouteProp, useNavigation } from "@react-navigation/native";
+import { RouteProp, useFocusEffect, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../utils/navitgation";
-import { useContext, useState } from "react";
-import { ExercisesContext, SetExercisesContext } from "../contexts/ExercisesContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useCallback, useState } from "react";
+import { Exercise } from "../interfaces/exercise";
+import { getExercises, saveNewExercise } from "../services/exercise";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import Fab from "../ui/Fab";
@@ -12,15 +12,13 @@ import { Asset } from "react-native-image-picker";
 import { Dropdown } from "react-native-element-dropdown";
 import Button from "../ui/Button";
 import { pickMedia } from "../services/media";
-import { saveNewExercise } from "../services/exercise";
 
 export default function WorkoutScreen({route}: {route: RouteProp<RootStackParamList, 'Workout'>}) {
   const workout = route.params.title;
-  const exercises = useContext(ExercisesContext);
-  const setExercises = useContext(SetExercisesContext);
-  AsyncStorage.getItem(`workouts[${workout}]`)
-  .then(string => string? JSON.parse(string): [])
-  .then(result => setExercises(result));
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  useFocusEffect(useCallback(() => {
+    getExercises(workout).then(setExercises);
+  }, [setExercises, workout]));
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   return (
     <>
@@ -52,7 +50,6 @@ export function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 
   const [image, setImage] = useState<Asset | undefined>();
   const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
   const [video, setVideo] = useState<Asset | undefined>();
-  const setExercises = useContext(SetExercisesContext);
   const navigation = useNavigation();
   return (
     <View style={styles.modal}>
@@ -132,7 +129,7 @@ export function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 
       </View>
       <Button onPress={() => {
         if(exerciseName.length < 3) return;
-        saveNewExercise(workout, {title: exerciseName, sets, reps, weight, weightUnit}, image, video).then(exercises => setExercises(exercises));
+        saveNewExercise(workout, {title: exerciseName, sets, reps, weight, weightUnit}, image, video);
         navigation.goBack();
       }} title='submit' />
     </View>

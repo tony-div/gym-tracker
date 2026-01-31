@@ -1,20 +1,23 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../utils/navitgation";
-import { useContext, useState } from "react";
-import { SetWorkoutsContext, WorkoutsContext } from "../contexts/WorkoutsContext";
-import { useNavigation } from "@react-navigation/native";
+import { useCallback, useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { StyleSheet, TextInput, View } from "react-native";
 import Fab from "../ui/Fab";
 import Button from "../ui/Button";
-import { saveNewWorkout } from "../services/workout";
+import { getWorkouts, saveNewWorkout } from "../services/workout";
+import { Workout } from "../interfaces/workout";
 
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  let workouts = useContext(WorkoutsContext);
+  const [workouts, setWorkouts] = useState<Workout[]>();
+  useFocusEffect(useCallback(() => {
+    getWorkouts().then(result => setWorkouts(result));
+  }, []));
   return (
     <>
       <View style={styles.home}>
-        {workouts.map(workout => <Button key={workout} title={workout} onPress={() => navigation.navigate('Workout', { 'title': workout })} />)}
+        {workouts && workouts.map(workout => <Button key={workout.workoutId} title={workout.workoutName} onPress={() => navigation.navigate('Workout', { 'title': workout.workoutName })} />)}
       </View>
       <Fab onPress={() => navigation.navigate("Add Workout")} iconName='plus' />
     </>
@@ -28,7 +31,6 @@ export function HomeEditButton() {
 
 export function AddWorkoutModal() {
   const [workoutName, setWorkoutName] = useState('');
-  const setWorkouts = useContext(SetWorkoutsContext);
   const navigation = useNavigation();
   return (
     <View style={styles.modal}>
@@ -37,7 +39,7 @@ export function AddWorkoutModal() {
       </View>
       <Button onPress={() => {
         if(workoutName.length < 3) return;
-        saveNewWorkout(workoutName).then(workouts => setWorkouts(workouts));
+        saveNewWorkout(workoutName);
         navigation.goBack();
       }} title='submit' />
     </View>
