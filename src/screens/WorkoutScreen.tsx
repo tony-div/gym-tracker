@@ -4,13 +4,14 @@ import { useCallback, useState } from "react";
 import { Exercise } from "../interfaces/exercise";
 import { getExercises, saveNewExercise } from "../services/exercise";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Fab from "../ui/Fab";
 import Card from "../ui/Card";
 import { Asset } from "react-native-image-picker";
 import { Dropdown } from "react-native-element-dropdown";
 import Button from "../ui/Button";
 import { pickMedia } from "../services/media";
+import ImagePreview from "../ui/ImagePreview";
 import VideoPlayer from "../ui/VideoPlayer";
 
 export default function WorkoutScreen({route}: {route: RouteProp<RootStackParamList, 'Workout'>}) {
@@ -41,7 +42,6 @@ export default function WorkoutScreen({route}: {route: RouteProp<RootStackParamL
 
 export function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 'Add Exercise'>}) {
   const workout = route.params.workout;
-  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const [exerciseName, setExerciseName] = useState('');
   const [sets, setSets] = useState(0);
   const [reps, setReps] = useState(0);
@@ -107,25 +107,12 @@ export function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 
             <Button title='choose video...' onPress={() => pickMedia('video').then(picked => setVideo(picked))} />
           }
         </View>
-        <Modal 
-          animationType='slide' 
-          backdropColor={'black'} 
-          visible={imagePreviewVisible}
-          onRequestClose={() => setImagePreviewVisible(false)}
-          style={styles.imageModal}
-        >
-          <View style={styles.imageContainer}>
-            <Image resizeMode='contain' source={{uri: image?.uri}} width={screenWidth * 0.9} height={Math.min(image?.height!, screenHeight * 0.7)} />
-          </View>
-          <View style={styles.row}>
-            <View style={styles.rowChild}>
-              <Button title='pick another photo' onPress={() => pickMedia('photo').then(picked => setImage(picked))} />
-            </View>
-            <View style={styles.rowChild}>
-              <Button title='ok' onPress={() => setImagePreviewVisible(false)} align="centered" />
-            </View>
-          </View>
-        </Modal>
+        <ImagePreview 
+          visible={imagePreviewVisible} 
+          onRequestClose={() => setImagePreviewVisible(false)} 
+          imageUri={image?.uri!}
+          pickAnotherHandler={() => pickMedia('photo').then(picked => setImage(picked))}
+        />
       </View>
       <Button onPress={() => {
         if(exerciseName.length < 3) return;
@@ -174,10 +161,6 @@ const styles = StyleSheet.create({
   },
   rowChild: {
     flexGrow: 1
-  },
-  video: {
-    width: '100%',
-    height: 200,
   },
   exerciseCard: {
     width: '50%'
