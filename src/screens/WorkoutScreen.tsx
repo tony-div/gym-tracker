@@ -7,11 +7,11 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from "react-native";
 import Fab from "../ui/Fab";
 import Card from "../ui/Card";
-import { useVideoPlayer, VideoView } from "react-native-video";
 import { Asset } from "react-native-image-picker";
 import { Dropdown } from "react-native-element-dropdown";
 import Button from "../ui/Button";
 import { pickMedia } from "../services/media";
+import VideoPlayer from "../ui/VideoPlayer";
 
 export default function WorkoutScreen({route}: {route: RouteProp<RootStackParamList, 'Workout'>}) {
   const workout = route.params.workout;
@@ -134,13 +134,6 @@ export function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 
       }} title='submit' align="centered" />
     </View>
   )
-}
-
-function VideoPlayer({uri}: {uri: string}) {
-  const player = useVideoPlayer({
-    uri,
-  });
-  return <VideoView player={player} controls={true} style={styles.video}/>
 }
 
 const styles = StyleSheet.create({
