@@ -13,6 +13,7 @@ import { deleteExercise, getExercises, updateExercise } from "../services/exerci
 import ButtonWitToolBar from "../ui/ButtonWithToolBar";
 import { Exercise } from "../interfaces/exercise";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { unlink } from "@dr.pogodin/react-native-fs";
 
 export default function EditExercisesScreen({route}: {route: RouteProp<RootStackParamList, 'Edit Exercises'>}) {
   const workout = route.params.workout;
@@ -48,9 +49,9 @@ export default function EditExercisesScreen({route}: {route: RouteProp<RootStack
 export function EditExerciseScreen({route}: {route: RouteProp<RootStackParamList, 'Edit Exercise'>}) {
   const exercise = route.params.exercise;
   const [exerciseName, setExerciseName] = useState(exercise.title);
-  const [sets, setSets] = useState(exercise.sets);
-  const [reps, setReps] = useState(exercise.reps);
-  const [weight, setWeight] = useState(exercise.weight);
+  const [sets, setSets] = useState<string>(exercise.sets.toString());
+  const [reps, setReps] = useState<string>(exercise.reps.toString());
+  const [weight, setWeight] = useState<string>(exercise.weight.toString());
   const [weightUnit, setWeightUnit] = useState<'kgs' | 'lbs' | 'plates'>(exercise.weightUnit);
   const [image, setImage] = useState<Asset | undefined>(exercise.imagePath ? {uri: exercise.imagePath} : undefined);
   const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
@@ -66,17 +67,17 @@ export function EditExerciseScreen({route}: {route: RouteProp<RootStackParamList
         <View style={styles.row}>
           <View style={styles.rowChild}>
             <Text>Sets</Text>
-            <TextInput inputMode='numeric' value={sets.toString()} onChangeText={text => setSets(parseInt(text, 10))} style={styles.textInput} />
+            <TextInput inputMode='numeric' value={sets.toString()} onChangeText={text => setSets(text)} style={styles.textInput} />
           </View>
           <View style={styles.rowChild}>
             <Text>Reps</Text>
-            <TextInput inputMode='numeric' value={reps.toString()} onChangeText={text => setReps(parseInt(text, 10))} style={styles.textInput} />
+            <TextInput inputMode='numeric' value={reps.toString()} onChangeText={text => setReps(text)} style={styles.textInput} />
           </View>
         </View>
         <View style={styles.row}>
           <View style={styles.rowChild}>
             <Text>Weight</Text>
-            <TextInput inputMode='numeric' value={weight.toString()} onChangeText={text => setWeight(parseInt(text, 10))} style={styles.textInput} />
+            <TextInput inputMode='numeric' value={weight.toString()} onChangeText={text => setWeight(text)} style={styles.textInput} />
           </View>
           <View style={[styles.container, styles.rowChild]}>
             <Text>Weight unit</Text>
@@ -124,9 +125,9 @@ export function EditExerciseScreen({route}: {route: RouteProp<RootStackParamList
         updateExercise({
           exerciseId: exercise.exerciseId,
           title: exerciseName,
-          sets,
-          reps,
-          weight,
+          sets: parseInt(sets, 10),
+          reps: parseInt(reps, 10),
+          weight: parseInt(weight, 10),
           weightUnit,
         }, image, video);
         navigation.goBack();

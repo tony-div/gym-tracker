@@ -16,9 +16,9 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 export default function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 'Add Exercise'>}) {
   const workout = route.params.workout;
   const [exerciseName, setExerciseName] = useState('');
-  const [sets, setSets] = useState(0);
-  const [reps, setReps] = useState(0);
-  const [weight, setWeight] = useState(0);
+  const [sets, setSets] = useState('');
+  const [reps, setReps] = useState('');
+  const [weight, setWeight] = useState('');
   const [weightUnit, setWeightUnit] = useState<'kgs' | 'lbs' | 'plates'>('kgs');
   const [image, setImage] = useState<Asset | undefined>();
   const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
@@ -34,17 +34,17 @@ export default function AddExerciseModal({route}: {route: RouteProp<RootStackPar
         <View style={styles.row}>
           <View style={styles.rowChild}>
             <Text>Sets</Text>
-            <TextInput inputMode='numeric' onChangeText={text => setSets(parseInt(text, 10))} style={styles.textInput} />
+            <TextInput inputMode='numeric' onChangeText={text => setSets(text)} style={styles.textInput} />
           </View>
           <View style={styles.rowChild}>
             <Text>Reps</Text>
-            <TextInput inputMode='numeric' onChangeText={text => setReps(parseInt(text, 10))} style={styles.textInput} />
+            <TextInput inputMode='numeric' onChangeText={text => setReps(text)} style={styles.textInput} />
           </View>
         </View>
         <View style={styles.row}>
           <View style={styles.rowChild}>
             <Text>Weight</Text>
-            <TextInput inputMode='numeric' onChangeText={text => setWeight(parseInt(text, 10))} style={styles.textInput} />
+            <TextInput inputMode='numeric' onChangeText={text => setWeight(text)} style={styles.textInput} />
           </View>
           <View style={[styles.container, styles.rowChild]}>
             <Text>Weight unit</Text>
@@ -92,7 +92,18 @@ export default function AddExerciseModal({route}: {route: RouteProp<RootStackPar
       </ScrollView>
       <Button onPress={() => {
         if(exerciseName.length < 3) return;
-        saveNewExercise(workout.workoutId, {title: exerciseName, sets, reps, weight, weightUnit}, image, video);
+        saveNewExercise(
+          workout.workoutId, 
+          {
+            title: exerciseName, 
+            sets: parseInt(sets, 10), 
+            reps: parseInt(reps, 10), 
+            weight: parseInt(weight, 10), 
+            weightUnit
+          }, 
+          image, 
+          video
+        );
         navigation.goBack();
       }} title='submit' align="centered" />
     </SafeAreaView>
