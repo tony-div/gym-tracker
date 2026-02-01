@@ -1,11 +1,14 @@
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { useEffect } from 'react';
-import HomeScreen, { AddWorkoutModal, HomeEditButton } from './src/screens/HomeScreen';
-import EditWorkoutsScreen, { EditWorkoutModal } from './src/screens/EditWorkoutsScreen';
+import HomeScreen, { HomeEditButton } from './src/screens/HomeScreen';
+import AddWorkoutModal from './src/modals/AddWorkoutModal';
+import EditWorkoutsScreen from './src/screens/EditWorkoutsScreen';
+import EditWorkoutModal from "./src/screens/EditWorkoutsScreen"
 import { Stack } from './src/utils/navitgation';
-import WorkoutScreen, { AddExerciseModal, WorkoutEditButton } from './src/screens/WorkoutScreen';
-import ExerciseScreen from './src/screens/ExerciseScreen';
+import WorkoutScreen, { WorkoutEditButton } from './src/screens/WorkoutScreen';
+import AddExerciseModal from './src/modals/AddExerciseModal';
+import ExerciseScreen, { ExerciseEditButton } from './src/screens/ExerciseScreen';
 import { initDb } from './src/services/sqlite';
 import EditExercisesScreen, { EditExerciseScreen } from './src/screens/EditExercisesScreen';
 
