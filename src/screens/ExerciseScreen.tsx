@@ -1,4 +1,4 @@
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../utils/navitgation";
 import { StyleSheet, ScrollView, View, Image, TouchableOpacity, useWindowDimensions } from "react-native";
 import Card from "../ui/Card";
@@ -6,6 +6,8 @@ import ImagePreview from "../ui/ImagePreview";
 import { useState } from "react";
 import VideoPlayer from "../ui/VideoPlayer";
 import Button from "../ui/Button";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Exercise } from "../interfaces/exercise";
 
 export default function ExerciseScreen({route}: {route: RouteProp<RootStackParamList, 'Exercise'>}) {
   const exercise = route.params.exercise;
@@ -40,6 +42,13 @@ export default function ExerciseScreen({route}: {route: RouteProp<RootStackParam
       </View>
       <Button title="start exercise" onPress={() => {}} align="centered" />
     </View>
+  )
+}
+
+export function ExerciseEditButton({exercise}: {exercise: Exercise}) {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  return (
+    <Button iconName="pen" iconSize="small" onPress={() => {navigation.navigate('Edit Exercise', { exercise })}} />
   )
 }
 

@@ -24,7 +24,8 @@ function RootStack() {
           headerRight: () => <WorkoutEditButton workout={route.params.workout} />
         })} />
         <Stack.Screen name="Exercise" component={ExerciseScreen} options={({ route }) => ({
-          title: route.params.exercise.title || "Exercise"
+          title: route.params.exercise.title || "Exercise",
+          headerRight: () => <ExerciseEditButton exercise={route.params.exercise} />
         })} />
         <Stack.Screen name="Edit Workouts" component={EditWorkoutsScreen} />
       </Stack.Group>
