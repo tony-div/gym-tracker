@@ -8,6 +8,8 @@ import Button from "../ui/Button";
 import { Workout } from "../interfaces/workout";
 import { deleteWorkout, getWorkouts } from "../services/workout";
 import { Modal } from "react-native";
+import { ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EditWorkoutsScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -17,44 +19,49 @@ export default function EditWorkoutsScreen() {
   useFocusEffect(useCallback(() => {
     getWorkouts().then(result => setWorkouts(result));
   }, []));
-  return <View style={styles.screen}>
-    {workouts && workouts.map(workout => (
-
-      <ButtonWitToolBar 
-        key={workout.workoutId} 
-        title={workout.workoutName} 
-        tools={[
-          { 
-            iconName: 'pen', 
-            onPress: () => { navigation.navigate('Edit Workout', { workout: {workoutId: workout.workoutId, workoutName: workout.workoutName } }); } 
-          },
-          {
-            iconName: 'trash',
-            onPress: () => {
-              setIsDeleteModalVisible(true);
-              setWorkoutToDelete(workout);
-            }
-          }
-        ]} />))}
-        <Modal visible={isDeleteModalVisible} backdropColor={'black'} animationType="slide">
-          <View style={styles.modal}>
-            <View style={styles.container}>
-              <Text>Are you sure you want to delete the workout "{workoutToDelete?.workoutName}"?</Text>
-            </View>
-            <Button onPress={() => {
-              setIsDeleteModalVisible(false);
-              setWorkoutToDelete(null);
-            }} title='Cancel' />
-            <Button onPress={() => {
-              deleteWorkout(workoutToDelete!.workoutId).then(() => {
-                getWorkouts().then(result => setWorkouts(result));
-                setIsDeleteModalVisible(false);
-                setWorkoutToDelete(null);
-              });
-            }} title='Delete' />
-          </View>
-        </Modal>
-  </View>;
+  return (
+    <SafeAreaView>
+      <ScrollView>
+        <View style={styles.screen}>
+          {workouts && workouts.map(workout => (
+            <ButtonWitToolBar 
+              key={workout.workoutId} 
+              title={workout.workoutName} 
+              tools={[
+                { 
+                  iconName: 'pen', 
+                  onPress: () => { navigation.navigate('Edit Workout', { workout: {workoutId: workout.workoutId, workoutName: workout.workoutName } }); } 
+                },
+                {
+                  iconName: 'trash',
+                  onPress: () => {
+                    setIsDeleteModalVisible(true);
+                    setWorkoutToDelete(workout);
+                  }
+                }
+              ]} />))}
+              <Modal visible={isDeleteModalVisible} backdropColor={'black'} animationType="slide">
+                <View style={styles.modal}>
+                  <View style={styles.container}>
+                    <Text>Are you sure you want to delete the workout "{workoutToDelete?.workoutName}"?</Text>
+                  </View>
+                  <Button onPress={() => {
+                    setIsDeleteModalVisible(false);
+                    setWorkoutToDelete(null);
+                  }} title='Cancel' />
+                  <Button onPress={() => {
+                    deleteWorkout(workoutToDelete!.workoutId).then(() => {
+                      getWorkouts().then(result => setWorkouts(result));
+                      setIsDeleteModalVisible(false);
+                      setWorkoutToDelete(null);
+                    });
+                  }} title='Delete' />
+                </View>
+              </Modal>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -64,7 +71,7 @@ const styles = StyleSheet.create({
   },
   modal: {
   display: 'flex',
-  height: '90%',
+  height: '100%',
   flexDirection: 'column',
   justifyContent: 'space-between',
   padding: 10

@@ -46,11 +46,4 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     flexGrow: 1,
   },
-  modal: {
-    display: 'flex',
-    height: '90%',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    padding: 10
-  },
 })
