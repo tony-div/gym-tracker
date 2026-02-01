@@ -109,7 +109,13 @@ export function EditExerciseScreen({route}: {route: RouteProp<RootStackParamList
             Video for exercise (optional)
           </Text>
           {video?
-            <VideoPlayer uri={video.uri!} />:
+            <>
+              <VideoPlayer uri={video.uri!} />
+              <View style={styles.row}>
+                <Button title='choose another video...' onPress={() => pickMedia('video').then(picked => setVideo(picked))} />
+                <Button title='delete video' onPress={() => {setVideo(undefined); unlink(video?.uri!);}} />
+              </View>
+            </>:
             <Button title='choose video...' onPress={() => pickMedia('video').then(picked => setVideo(picked))} />
           }
         </View>
@@ -118,6 +124,7 @@ export function EditExerciseScreen({route}: {route: RouteProp<RootStackParamList
           onRequestClose={() => setImagePreviewVisible(false)} 
           imageUri={image?.uri!}
           pickAnotherHandler={() => pickMedia('photo').then(picked => setImage(picked))}
+          deleteHandler={() => {setImage(undefined); setImagePreviewVisible(false); unlink(image?.uri!);}}
         />
       </View>
       <Button onPress={() => {

@@ -12,6 +12,7 @@ import VideoPlayer from "../ui/VideoPlayer";
 import ImagePreview from "../ui/ImagePreview";
 import { saveNewExercise } from "../services/exercise";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { unlink } from "@dr.pogodin/react-native-fs";
 
 export default function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 'Add Exercise'>}) {
   const workout = route.params.workout;
@@ -79,15 +80,17 @@ export default function AddExerciseModal({route}: {route: RouteProp<RootStackPar
             <>
               <VideoPlayer uri={video.uri!} />
               <Button title='choose another video...' onPress={() => pickMedia('video').then(picked => setVideo(picked))} />
+              <Button title='delete video' onPress={() => {setVideo(undefined); unlink(video?.uri!);}} />
             </>:
             <Button title='choose video...' onPress={() => pickMedia('video').then(picked => setVideo(picked))} />
           }
         </View>
         <ImagePreview 
           visible={imagePreviewVisible} 
-          onRequestClose={() => setImagePreviewVisible(false)} 
+          onRequestClose={() => setImagePreviewVisible(false)}
           imageUri={image?.uri!}
           pickAnotherHandler={() => pickMedia('photo').then(picked => setImage(picked))}
+          deleteHandler={() => {setImage(undefined); setImagePreviewVisible(false); unlink(image?.uri!);}}
         />
       </ScrollView>
       <Button onPress={() => {
