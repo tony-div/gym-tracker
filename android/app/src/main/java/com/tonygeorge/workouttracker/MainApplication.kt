@@ -1,4 +1,4 @@
-package com.gymtracker
+package com.tonygeorge.workouttracker
 
 import android.app.Application
 import com.facebook.react.PackageList
