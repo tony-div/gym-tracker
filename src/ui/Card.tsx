@@ -32,8 +32,8 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
   },
   cardImage: {
-    width: 200,
-    height: 200
+    width: 150,
+    height: 150
   },
   cardText: {
     display: 'flex',

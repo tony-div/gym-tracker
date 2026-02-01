@@ -35,13 +35,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     shadowColor: '#000',
-    fontSize: 15,
   },
   centered: {
     justifyContent: 'center'
   },
   buttonText: {
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: 18,
   },
   buttonNoIcon: {
     width: '95%',
