@@ -2,10 +2,10 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../utils/navitgation";
 import { useCallback, useState } from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Fab from "../ui/Fab";
 import Button from "../ui/Button";
-import { getWorkouts, saveNewWorkout } from "../services/workout";
+import { getWorkouts } from "../services/workout";
 import { Workout } from "../interfaces/workout";
 
 export default function HomeScreen() {
@@ -25,25 +25,8 @@ export default function HomeScreen() {
 }
 
 export function HomeEditButton() {
-  const naviagation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  return <Button iconSize='small' iconName='pen' onPress={() => naviagation.navigate('Edit Workouts')} />;
-}
-
-export function AddWorkoutModal() {
-  const [workoutName, setWorkoutName] = useState('');
-  const navigation = useNavigation();
-  return (
-    <View style={styles.modal}>
-      <View style={styles.container}>
-        <TextInput placeholder='workout name' onChangeText={(text) => setWorkoutName(text)} style={styles.textInput} />
-      </View>
-      <Button onPress={() => {
-        if(workoutName.length < 3) return;
-        saveNewWorkout(workoutName);
-        navigation.goBack();
-      }} title='submit' align="centered" />
-    </View>
-  )
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  return <Button iconSize='small' iconName='pen' onPress={() => navigation.navigate('Edit Workouts')} />;
 }
 
 const styles = StyleSheet.create({
