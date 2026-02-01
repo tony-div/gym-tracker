@@ -1,4 +1,5 @@
 export interface Exercise {
+  exerciseId: number;
   title: string;
   imagePath?: string;
   videoPath?: string;

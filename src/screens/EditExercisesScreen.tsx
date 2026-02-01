@@ -1,85 +1,82 @@
-import { RouteProp, useFocusEffect, useNavigation } from "@react-navigation/native";
+import { RouteProp, useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../utils/navitgation";
 import { useCallback, useState } from "react";
-import { Exercise } from "../interfaces/exercise";
-import { getExercises, saveNewExercise } from "../services/exercise";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import Fab from "../ui/Fab";
-import Card from "../ui/Card";
 import { Asset } from "react-native-image-picker";
+import { useNavigation } from "@react-navigation/native";
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import Button from "../ui/Button";
 import { pickMedia } from "../services/media";
-import ImagePreview from "../ui/ImagePreview";
+import Button from "../ui/Button";
 import VideoPlayer from "../ui/VideoPlayer";
-import { Workout } from "../interfaces/workout";
-import { ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import ImagePreview from "../ui/ImagePreview";
+import { deleteExercise, getExercises, updateExercise } from "../services/exercise";
+import ButtonWitToolBar from "../ui/ButtonWithToolBar";
+import { Exercise } from "../interfaces/exercise";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-export default function WorkoutScreen({route}: {route: RouteProp<RootStackParamList, 'Workout'>}) {
+export default function EditExercisesScreen({route}: {route: RouteProp<RootStackParamList, 'Edit Exercises'>}) {
   const workout = route.params.workout;
   const [exercises, setExercises] = useState<Exercise[]>([]);
-  useFocusEffect(useCallback(() => {
-    getExercises(workout.workoutId).then(setExercises);
-  }, [setExercises, workout]));
+    useFocusEffect(useCallback(() => {
+      getExercises(workout.workoutId).then(setExercises);
+    }, [setExercises, workout]));
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   return (
-    <>
-      <View style={[styles.container, styles.row]}>
-        {exercises.map(exercise => {
-          return <View key={exercise.title} style={styles.exerciseCard}>
-            <Card 
-            key={exercise.title}
-            title={exercise.title} 
-            imagePath={exercise.imagePath} 
-            onPress={() => navigation.navigate("Exercise", { exercise })} 
-          />
-          </View>
-        })}
-      </View>
-      <Fab onPress={() => navigation.navigate("Add Exercise", {workout})} iconName='plus' />
-    </>
-  );
+    <View style={styles.container}>
+      {exercises.map(exercise => (
+        <ButtonWitToolBar 
+          key={exercise.exerciseId}
+          title={exercise.title}
+          tools={[
+            { 
+              iconName: 'pen', 
+              onPress: () => {navigation.navigate('Edit Exercise', { exercise })} 
+            },
+            {
+              iconName: 'trash',
+              onPress: () => {deleteExercise(exercise.exerciseId).then(() => {
+                getExercises(workout.workoutId).then(setExercises);
+              })}
+            }
+          ]}
+        />
+      ))}
+    </View>
+  )
 }
 
-export function WorkoutEditButton({workout}: {workout: Workout}) {
-  const naviagation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  return <Button iconSize='small' iconName='pen' onPress={() => naviagation.navigate("Edit Exercises", {workout})} />;
-}
-
-export function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 'Add Exercise'>}) {
-  const workout = route.params.workout;
-  const [exerciseName, setExerciseName] = useState('');
-  const [sets, setSets] = useState(0);
-  const [reps, setReps] = useState(0);
-  const [weight, setWeight] = useState(0);
-  const [weightUnit, setWeightUnit] = useState<'kgs' | 'lbs' | 'plates'>('kgs');
-  const [image, setImage] = useState<Asset | undefined>();
+export function EditExerciseScreen({route}: {route: RouteProp<RootStackParamList, 'Edit Exercise'>}) {
+  const exercise = route.params.exercise;
+  const [exerciseName, setExerciseName] = useState(exercise.title);
+  const [sets, setSets] = useState(exercise.sets);
+  const [reps, setReps] = useState(exercise.reps);
+  const [weight, setWeight] = useState(exercise.weight);
+  const [weightUnit, setWeightUnit] = useState<'kgs' | 'lbs' | 'plates'>(exercise.weightUnit);
+  const [image, setImage] = useState<Asset | undefined>(exercise.imagePath ? {uri: exercise.imagePath} : undefined);
   const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
-  const [video, setVideo] = useState<Asset | undefined>();
-  const navigation = useNavigation();
+  const [video, setVideo] = useState<Asset | undefined>(exercise.videoPath ? {uri: exercise.videoPath} : undefined);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   return (
-    <SafeAreaView style={styles.modal}>
-      <ScrollView>
+    <View style={styles.modal}>
+      <View>
         <View style={styles.container}>
           <Text>Exercise name</Text>
-          <TextInput onChangeText={(text) => setExerciseName(text)} style={styles.textInput} />
+          <TextInput value={exerciseName} onChangeText={(text) => setExerciseName(text)} style={styles.textInput} />
         </View>
         <View style={styles.row}>
           <View style={styles.rowChild}>
             <Text>Sets</Text>
-            <TextInput inputMode='numeric' onChangeText={text => setSets(parseInt(text, 10))} style={styles.textInput} />
+            <TextInput inputMode='numeric' value={sets.toString()} onChangeText={text => setSets(parseInt(text, 10))} style={styles.textInput} />
           </View>
           <View style={styles.rowChild}>
             <Text>Reps</Text>
-            <TextInput inputMode='numeric' onChangeText={text => setReps(parseInt(text, 10))} style={styles.textInput} />
+            <TextInput inputMode='numeric' value={reps.toString()} onChangeText={text => setReps(parseInt(text, 10))} style={styles.textInput} />
           </View>
         </View>
         <View style={styles.row}>
           <View style={styles.rowChild}>
             <Text>Weight</Text>
-            <TextInput inputMode='numeric' onChangeText={text => setWeight(parseInt(text, 10))} style={styles.textInput} />
+            <TextInput inputMode='numeric' value={weight.toString()} onChangeText={text => setWeight(parseInt(text, 10))} style={styles.textInput} />
           </View>
           <View style={[styles.container, styles.rowChild]}>
             <Text>Weight unit</Text>
@@ -99,7 +96,7 @@ export function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 
           <Text>
             Image for exercise (optional)
           </Text>
-          {image? 
+          {image?
             <TouchableOpacity onPress={() => setImagePreviewVisible(true)}>
               <Image resizeMode='contain' source={{uri: image.uri}} width={200} height={100}/>
             </TouchableOpacity>:
@@ -111,10 +108,7 @@ export function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 
             Video for exercise (optional)
           </Text>
           {video?
-            <>
-              <VideoPlayer uri={video.uri!} />
-              <Button title='choose another video...' onPress={() => pickMedia('video').then(picked => setVideo(picked))} />
-            </>:
+            <VideoPlayer uri={video.uri!} />:
             <Button title='choose video...' onPress={() => pickMedia('video').then(picked => setVideo(picked))} />
           }
         </View>
@@ -124,13 +118,20 @@ export function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 
           imageUri={image?.uri!}
           pickAnotherHandler={() => pickMedia('photo').then(picked => setImage(picked))}
         />
-      </ScrollView>
+      </View>
       <Button onPress={() => {
         if(exerciseName.length < 3) return;
-        saveNewExercise(workout.workoutId, {title: exerciseName, sets, reps, weight, weightUnit}, image, video);
+        updateExercise({
+          exerciseId: exercise.exerciseId,
+          title: exerciseName,
+          sets,
+          reps,
+          weight,
+          weightUnit,
+        }, image, video);
         navigation.goBack();
       }} title='submit' align="centered" />
-    </SafeAreaView>
+    </View>
   )
 }
 
@@ -149,9 +150,10 @@ const styles = StyleSheet.create({
   },
   modal: {
     display: 'flex',
-    height: '100%',
+    height: '90%',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    padding: 10
   },
   imageModal: {
     display: 'flex',

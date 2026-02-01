@@ -9,6 +9,8 @@ export type RootStackParamList = {
   'Edit Workout': { workout: Workout};
   'Edit Workouts': undefined;
   'Add Exercise': { workout: Workout };
+  'Edit Exercises': { workout: Workout };
+  'Edit Exercise': { exercise: Exercise };
   'Exercise': { exercise: Exercise };
 };
 

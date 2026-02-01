@@ -4,9 +4,10 @@ import { useEffect } from 'react';
 import HomeScreen, { AddWorkoutModal, HomeEditButton } from './src/screens/HomeScreen';
 import EditWorkoutsScreen, { EditWorkoutModal } from './src/screens/EditWorkoutsScreen';
 import { Stack } from './src/utils/navitgation';
-import WorkoutScreen, { AddExerciseModal } from './src/screens/WorkoutScreen';
+import WorkoutScreen, { AddExerciseModal, WorkoutEditButton } from './src/screens/WorkoutScreen';
 import ExerciseScreen from './src/screens/ExerciseScreen';
 import { initDb } from './src/services/sqlite';
+import EditExercisesScreen, { EditExerciseScreen } from './src/screens/EditExercisesScreen';
 
 function RootStack() {
   return (
@@ -16,8 +17,9 @@ function RootStack() {
           headerRight: HomeEditButton
         }} />
         <Stack.Screen name="Workout" component={WorkoutScreen} options={({ route }) => ({
-          title: route.params.workout.workoutName || "Day"
-        })}/>
+          title: route.params.workout.workoutName || "Day",
+          headerRight: () => <WorkoutEditButton workout={route.params.workout} />
+        })} />
         <Stack.Screen name="Exercise" component={ExerciseScreen} options={({ route }) => ({
           title: route.params.exercise.title || "Exercise"
         })} />
@@ -26,6 +28,10 @@ function RootStack() {
       <Stack.Group screenOptions={{presentation: 'modal'}}>
         <Stack.Screen name='Add Workout' component={AddWorkoutModal} />
         <Stack.Screen name='Edit Workout' component={EditWorkoutModal} />
+        <Stack.Screen name='Edit Exercises' component={EditExercisesScreen} options={({ route }) => ({
+          title: `Edit Workout: ${route.params.workout.workoutName}`
+        })}/>
+        <Stack.Screen name='Edit Exercise' component={EditExerciseScreen} />
         <Stack.Screen name='Add Exercise' component={AddExerciseModal} />
       </Stack.Group>
     </Stack.Navigator>
