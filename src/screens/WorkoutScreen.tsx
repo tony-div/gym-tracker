@@ -13,6 +13,8 @@ import Button from "../ui/Button";
 import { pickMedia } from "../services/media";
 import ImagePreview from "../ui/ImagePreview";
 import VideoPlayer from "../ui/VideoPlayer";
+import { ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function WorkoutScreen({route}: {route: RouteProp<RootStackParamList, 'Workout'>}) {
   const workout = route.params.workout;
@@ -52,8 +54,8 @@ export function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 
   const [video, setVideo] = useState<Asset | undefined>();
   const navigation = useNavigation();
   return (
-    <View style={styles.modal}>
-      <View>
+    <SafeAreaView style={styles.modal}>
+      <ScrollView>
         <View style={styles.container}>
           <Text>Exercise name</Text>
           <TextInput onChangeText={(text) => setExerciseName(text)} style={styles.textInput} />
@@ -103,7 +105,10 @@ export function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 
             Video for exercise (optional)
           </Text>
           {video?
-            <VideoPlayer uri={video.uri!} />:
+            <>
+              <VideoPlayer uri={video.uri!} />
+              <Button title='choose another video...' onPress={() => pickMedia('video').then(picked => setVideo(picked))} />
+            </>:
             <Button title='choose video...' onPress={() => pickMedia('video').then(picked => setVideo(picked))} />
           }
         </View>
@@ -113,13 +118,13 @@ export function AddExerciseModal({route}: {route: RouteProp<RootStackParamList, 
           imageUri={image?.uri!}
           pickAnotherHandler={() => pickMedia('photo').then(picked => setImage(picked))}
         />
-      </View>
+      </ScrollView>
       <Button onPress={() => {
         if(exerciseName.length < 3) return;
         saveNewExercise(workout.workoutId, {title: exerciseName, sets, reps, weight, weightUnit}, image, video);
         navigation.goBack();
       }} title='submit' align="centered" />
-    </View>
+    </SafeAreaView>
   )
 }
 
@@ -138,10 +143,9 @@ const styles = StyleSheet.create({
   },
   modal: {
     display: 'flex',
-    height: '90%',
+    height: '100%',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    padding: 10
   },
   imageModal: {
     display: 'flex',
