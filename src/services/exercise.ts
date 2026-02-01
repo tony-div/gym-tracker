@@ -66,7 +66,7 @@ export const updateExercise = async (exercise: Exercise, image?: Asset, video?: 
     let finalImageUri = image?.uri ?? null;
     let finalVideoUri = video?.uri ?? null;
 
-    if (image && image.uri !== existingExercise.image_uri) {
+    if(image?.uri !== existingExercise.image_uri) {
       if (existingExercise.image_uri) {
         try {
           await unlink(existingExercise.image_uri);
@@ -74,12 +74,14 @@ export const updateExercise = async (exercise: Exercise, image?: Asset, video?: 
           console.warn("Failed to delete old image", e);
         }
       }
-      const imageDestPath = `file://${DocumentDirectoryPath}/${image.fileName}`;
-      await moveFile(image.uri!, imageDestPath);
-      finalImageUri = imageDestPath;
+      if (image) {
+        const imageDestPath = `file://${DocumentDirectoryPath}/${image.fileName}`;
+        await moveFile(image.uri!, imageDestPath);
+        finalImageUri = imageDestPath;
+      }
     }
 
-    if (video && video.uri !== existingExercise.video_uri) {
+    if (video?.uri !== existingExercise.video_uri) {
       if (existingExercise.video_uri) {
         try {
           await unlink(existingExercise.video_uri);
@@ -87,9 +89,11 @@ export const updateExercise = async (exercise: Exercise, image?: Asset, video?: 
           console.warn("Failed to delete old video", e);
         }
       }
-      const videoDestPath = `file://${DocumentDirectoryPath}/${video.fileName}`;
-      await moveFile(video.uri!, videoDestPath);
-      finalVideoUri = videoDestPath;
+      if(video) {
+        const videoDestPath = `file://${DocumentDirectoryPath}/${video.fileName}`;
+        await moveFile(video.uri!, videoDestPath);
+        finalVideoUri = videoDestPath;
+      }
     } 
     await db.execute(
       `UPDATE exercises 
